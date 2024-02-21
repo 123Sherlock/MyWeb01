@@ -1,0 +1,4 @@
+#端口，默认8080
+server.port=8080
+#虚拟路径，默认为空，localhost:8080/虚拟路径/RequestMapping里的值，注意前面都要带有斜杠
+server.servlet.context-path=

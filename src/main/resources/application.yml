@@ -1,0 +1,31 @@
+server:
+  #端口，默认8080
+  port: 8080
+  servlet:
+    #虚拟路径，默认为空，localhost:8080/虚拟路径/RequestMapping里的值，注意前面都要带有斜杠
+    context-path:
+
+#三方技术配置信息，spring自动注入，可直接使用
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/mybatis
+    username: root
+    password: 1234
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: 123456
+      connect-timeout: 3000
+
+#自定义配置信息，需要手动获取
+ali-yun:
+  oss:
+    bucket-name: gsw
+
+#数组配置示例
+hobbies:
+  - 唱
+  - 跳
+  - rap
