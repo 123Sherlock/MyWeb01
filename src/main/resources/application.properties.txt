@@ -1,4 +1,5 @@
-#端口，默认8080
+# application.properties使用点来分隔层级，阅读不便且冗余，推荐使用yml/yaml的配置方式
+# 端口，默认8080
 server.port=8080
-#虚拟路径，默认为空，localhost:8080/虚拟路径/RequestMapping里的值，注意前面都要带有斜杠
+# 虚拟路径，默认为空，localhost:8080/虚拟路径/RequestMapping里的值，注意前面都要带有斜杠
 server.servlet.context-path=

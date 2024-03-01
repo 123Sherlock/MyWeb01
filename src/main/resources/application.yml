@@ -1,17 +1,25 @@
 server:
-  #端口，默认8080
+  # 端口，默认8080
   port: 8080
   servlet:
-    #虚拟路径，默认为空，localhost:8080/虚拟路径/RequestMapping里的值，注意前面都要带有斜杠
+    # 虚拟路径，默认为空，localhost:8080/虚拟路径/RequestMapping里的值，注意前面都要带有斜杠
     context-path:
 
-#三方技术配置信息，spring自动注入，可直接使用
+logging:
+  level:
+    org.hifumi: debug
+  pattern:
+    dateformat: HH:mm:ss
+
+# 三方技术配置信息，spring自动注入，可直接使用
 spring:
+  # 这里配置的数据库连接，spring自动读取，无需手动连接
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/mybatis
+    # rewriteBatchedStatements默认为false，批量插入时逐条INSERT，改为true后，会拼成一条INSERT语句，性能更好
+    url: jdbc:mysql://localhost:3306/web01?serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true
     username: root
-    password: 1234
+    password: 123Chengx
   data:
     redis:
       host: localhost
@@ -19,12 +27,46 @@ spring:
       password: 123456
       connect-timeout: 3000
 
-#自定义配置信息，需要手动获取
+mybatis-plus:
+  type-aliases-package: org.hifumi.pojo # 别名扫描包
+  mapper-locations: "classpath*:/mapper/**/*.xml" # Mapper.xml文件地址，默认值
+  configuration:
+    map-underscore-to-camel-case: true # 是否开启下划线和驼峰的映射
+    cache-enabled: false # 是否开启二级缓存
+    # 指定默认的枚举类型转换器，即启用@EnumValue，从MyBatis-Plus3.5.2开始默认就是MybatisEnumTypeHandler
+    default-enum-type-handler: com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler
+  global-config:
+    db-config:
+      id-type: assign_id # 默认id生成策略为雪花算法
+      update-strategy: not_null # 默认更新策略为只更新非空字段
+      # 逻辑删除，即用一个字段的值0/1或者false/true表示正常/删除，当配置了这个，则remove会自动变成update
+      logic-delete-field: deleted # 全局逻辑删除的字段名
+      logic-delete-value: 1 # 逻辑已删除值，默认1
+      logic-not-delete-value: 0 # 逻辑未删除值，默认0
+
+# Swagger配置
+knife4j:
+  enable: true
+  openapi:
+    title: 用户管理接口文档
+    description: "用户管理接口文档"
+    email: 920028516@qq.com
+    concat: hifumi
+    url: localhost:8080
+    version: v1.0.0
+    group:
+      default:
+        group-name: default
+        api-rule: package
+        api-rule-resources:
+          - org.hifumi.controller
+
+# 自定义配置信息，需要手动获取
 ali-yun:
   oss:
     bucket-name: gsw
 
-#数组配置示例
+# 数组配置示例
 hobbies:
   - 唱
   - 跳
