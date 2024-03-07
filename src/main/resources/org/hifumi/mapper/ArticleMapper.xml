@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hifumi.mapper.ArticleMapper">
+    <!-- id里填写Mapper里的方法名 -->
+    <select id="list" resultType="org.hifumi.domain.pojo.article.Article">
+        SELECT * FROM `article`
+        <where>
+            <if test="categoryId != null">
+                <!-- 前面是数据库的字段名，后面是Mapper方法的参数名 -->
+                `category_id` = #{categoryId}
+            </if>
+            <if test="status != null">
+                AND `status` = #{status}
+            </if>
+            AND `create_user` = #{userId}
+        </where>
+    </select>
+</mapper>

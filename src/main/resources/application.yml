@@ -1,3 +1,5 @@
+# 此文件在开发时放在resources目录下，打包后放在jar包相同目录下
+# 启动参数生效优先级：命令行参数>系统环境变量>jar包目录下的yml文件>resources目录下的yml文件
 server:
   # 端口，默认8080
   port: 8080
@@ -13,16 +15,21 @@ logging:
 
 # 三方技术配置信息，spring自动注入，可直接使用
 spring:
+  profiles:
+    active: dev # 指定激活的环境名称，具体查看下方三个横杠的配置
+#    group: # 可以把本配置文件拆分到不同文件中，然后定义分组，指定active下的所有分组都会生效
+#      "dev": devServer,devDB,devSelf
+#      "test": testServer,testDB,testSelf
   # 这里配置的数据库连接，spring自动读取，无需手动连接
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     # rewriteBatchedStatements默认为false，批量插入时逐条INSERT，改为true后，会拼成一条INSERT语句，性能更好
     url: jdbc:mysql://localhost:3306/web01?serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true
     username: root
-    password: 123Chengx
+    password: 123456
   data:
     redis:
-      host: localhost
+      host: 127.0.0.1
       port: 6379
       password: 123456
       connect-timeout: 3000
@@ -31,7 +38,7 @@ mybatis-plus:
   type-aliases-package: org.hifumi.pojo # 别名扫描包
   mapper-locations: "classpath*:/mapper/**/*.xml" # Mapper.xml文件地址，默认值
   configuration:
-    map-underscore-to-camel-case: true # 是否开启下划线和驼峰的映射
+    map-underscore-to-camel-case: true # 是否开启数据库下划线命名和实体类驼峰命名的自动转换
     cache-enabled: false # 是否开启二级缓存
     # 指定默认的枚举类型转换器，即启用@EnumValue，从MyBatis-Plus3.5.2开始默认就是MybatisEnumTypeHandler
     default-enum-type-handler: com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler
@@ -50,7 +57,6 @@ knife4j:
   openapi:
     title: 用户管理接口文档
     description: "用户管理接口文档"
-    email: 920028516@qq.com
     concat: hifumi
     url: localhost:8080
     version: v1.0.0
@@ -71,3 +77,31 @@ hobbies:
   - 唱
   - 跳
   - rap
+
+# 使用三个横杠来分隔不同环境下的配置
+# 第一个三横杠上方的配置在所有环境中通用
+# 通过上方的spring.profiles.active配置来决定激活哪个环境
+# 特定环境下的配置生效优先级高于通用配置
+# 这种三横杠的配置方式可能使单文件过于臃肿，推荐改用多文件的配置方式
+# 多文件配置方式为在本文件相同目录下，建立application-[环境名称].yml
+---
+spring:
+  config:
+    activate:
+      on-profile: dev # 开发环境的名称
+server:
+  port: 8080
+---
+spring:
+  config:
+    activate:
+      on-profile: test # 测试环境的名称
+server:
+  port: 8081
+---
+spring:
+  config:
+    activate:
+      on-profile: pro # 生产环境的名称
+server:
+  port: 8082

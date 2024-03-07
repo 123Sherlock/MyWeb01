@@ -39,4 +39,8 @@ public class Result<T> {
     public static Result<?> fail(String message) {
         return new Result<>(FAIL_CODE, message, null);
     }
+
+    public static <D> Result<D> fail(String message, D data) {
+        return new Result<>(FAIL_CODE, message, data);
+    }
 }

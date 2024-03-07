@@ -8,20 +8,16 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
-import org.hifumi.domain.pojo.User;
+import org.hifumi.domain.pojo.user.User;
 
 @Mapper
 public interface UserMapper extends BaseMapper<User> {
 
-    @Select("SELECT * FROM `user` WHERE `id` = #{id}")
-    User findById(Long id);
+    @Select("SELECT * FROM `user` WHERE `username` = #{username}")
+    User findByUsername(String username);
 
-    @Select("SELECT * FROM `user` WHERE `name` = #{name}")
-    User findByName(String name);
-
-    @Insert("INSERT INTO `user`(`name`, `password`, `create_time`, `update_time`)" +
-        " VALUES(#{name}, #{password}, now(), now())")
-    void add(String name, String password);
+    @Insert("INSERT INTO `user`(`username`, `password`, `create_time`) VALUES(#{username}, #{password}, now())")
+    void add(String username, String password);
 
     /**
      * 在SQL中默认使用变量名作为字段名

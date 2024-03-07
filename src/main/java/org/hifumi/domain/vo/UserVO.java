@@ -5,8 +5,9 @@ package org.hifumi.domain.vo;
 
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.FieldDefaults;
-import org.hifumi.domain.pojo.UserInfo;
+import org.hifumi.domain.pojo.user.UserDetail;
 import org.hifumi.enums.UserStatus;
 
 import java.time.LocalDateTime;
@@ -15,9 +16,10 @@ import java.time.LocalDateTime;
  * VO用来把结果数据返回给前端
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 //@ApiModel(description = "用户VO实体")
-public class UserVO {
+public class UserVO extends BaseVO {
 
 //    @ApiModelProperty("id")
     Long id;
@@ -32,5 +34,5 @@ public class UserVO {
 
     UserStatus status;
 
-    UserInfo info;
+    UserDetail detail;
 }

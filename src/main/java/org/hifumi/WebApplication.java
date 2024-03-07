@@ -9,7 +9,7 @@ import org.springframework.context.ApplicationContext;
  * SpringBootApplication注解整合了@ComponentScan自动扫描bean
  * ComponentScan无参数时，默认扫描当前类所在的包及其子包下的所有bean
  * 手动指定bean扫描的范围，@ComponentScan(basePackages = "org.hifumi")
- *
+ * <p>
  * SpringBootApplication注解整合了@EnableAutoConfiguration
  * EnableAutoConfiguration注解又整合了@Import(AutoConfigurationImportSelector.class)
  * AutoConfigurationImportSelector类实现了ImportSelector接口
@@ -19,7 +19,7 @@ import org.springframework.context.ApplicationContext;
  * 在SpringBoot2.7之前，不是配置在AutoConfiguration.imports而是相同目录下的spring.factories
  * 在SpringBoot2.7-3.0，同时兼容AutoConfiguration.imports和spring.factories
  * 在SpringBoot3.0以后，仅支持spring.factories
- *
+ * <p>
  * 可通过@Import注入第三方bean，里面的参数支持数组，即@Import({MyClass1.class, MyClass2.class})
  * 也可在@Import里填入ImportSelector接口的实现类，在该类里编写需要注入的bean
  */
@@ -28,6 +28,13 @@ import org.springframework.context.ApplicationContext;
 @SpringBootApplication
 public class WebApplication {
 
+    /**
+     * SpringBoot的启动类固定main方法
+     * 最简洁的写法只有一行SpringApplication.run(WebApplication.class, args);
+     *
+     * @param args 支持在启动时传入外部参数，如java -jar MyWeb01.1.0.jar --server.port=9090
+     *             另外也可以配置在系统的环境变量中，如变量名server.port，值9090，能自动读取
+     */
     public static void main(String[] args) {
         ApplicationContext context = SpringApplication.run(WebApplication.class, args);
         CommonConfig commonConfig = context.getBean(CommonConfig.class);

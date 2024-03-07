@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import org.hifumi.domain.pojo.Result;
-import org.hifumi.domain.pojo.User;
+import org.hifumi.domain.pojo.user.User;
 import org.hifumi.domain.vo.UserVO;
 import org.hifumi.mapper.UserMapper;
 import org.hifumi.service.UserService;
@@ -26,6 +26,8 @@ import java.util.List;
  * 同时本类又不想把IService里的方法再实现一遍
  * 就需要继承ServiceImpl类
  * 泛型参数为Mapper类和POJO类
+ * 在IDEA Ultimate版本中，可以使用MyBatisPlus插件（初音未来头像）来快捷生成Service、ServiceImpl、Mapper等
+ * 或者使用MyBatisX（MP官方提供的插件）
  */
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
@@ -37,33 +39,33 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public User findByName(String name) {
-        return userMapper.findByName(name);
+    public User findByName(String username) {
+        return userMapper.findByUsername(username);
     }
 
     @Override
-    public Result<?> register(String name, String password) {
-        if (findByName(name) != null) {
+    public Result<?> register(String username, String password) {
+        if (findByName(username) != null) {
             return Result.fail("用户名重复");
         }
         User user = new User();
-        user.setName(name);
+        user.setUsername(username);
         user.setPassword(MD5Util.encrypt(password));
         userMapper.insert(user);
-//        userMapper.add(name, MD5Util.encrypt(password));
+//        userMapper.add(username, MD5Util.encrypt(password));
         return Result.success();
     }
 
     @Override
     public Result<List<UserVO>> all() {
         QueryWrapper<User> wrapper = new QueryWrapper<User>()
-            .select("id", "name", "icon")
-            .like("name", "i")
+            .select("id", "username", "icon")
+            .like("username", "i")
             .ge("id", 1);
 
         // 由于QueryWrapper写死字段名，推荐改用LambdaQueryWrapper
         LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<User>()
-            .select(User::getId, User::getName);
+            .select(User::getId, User::getUsername);
         List<User> users = userMapper.selectList(wrapper);
 
         // 仅更新指定字段
@@ -85,7 +87,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 使用lambdaQuery比new Wrapper更方便
         String name = "i";
         List<User> userList = lambdaQuery()
-            .like(StrUtil.isNotBlank(name), User::getName, name) // 当isNotBlank成立时，才启用此条件
+            .like(StrUtil.isNotBlank(name), User::getUsername, name) // 当isNotBlank成立时，才启用此条件
             .gt(User::getId, 1)
             .between(User::getCreateTime, LocalDateTime.now(), LocalDateTime.now().plusDays(1))
             .list(); // 查一个时用one()，查数量时用count()
@@ -101,12 +103,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         Db.lambdaQuery(User.class);
 
         // 使用MyBatis-Plus的分页插件，在MyBatisConfig里初始化
-        // 常用的分页插件还有PageHelper，据说更方便
         int pageNo = 1, pageSize = 10;
         Page<User> page = Page.of(pageNo, pageSize);
-        page.addOrder(OrderItem.ascs("id", "name")); // 设置排序字段
+        page.addOrder(OrderItem.ascs("id", "username")); // 设置排序字段
         page(page, wrapper); // 分页查询
         page.getPages(); // 总页数
+
+        // 使用PageHelper分页插件
+//        PageHelper.startPage(pageNo, pageSize);
+//        List<User> list = list();
+//        com.github.pagehelper.Page<User> p = (Page<User>) list;
+//        p.getTotal(); // 总条数
+//        p.getResult(); // 该分页下的数据
 
         return Result.success(BeanUtil.copyToList(users, UserVO.class));
     }
